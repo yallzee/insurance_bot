@@ -9,8 +9,9 @@ from telegram.ext import (
 
 import asyncio
 import re
+import os
 
-TOKEN = "8798460059:AAEiBk92C3xSCAqIAk9pgNO2u9wvkb9jgvo"
+TOKEN = os.getenv("TOKEN")
 AGENT_ID = -1003979881555
 
 app = Application.builder().token(TOKEN).build()
@@ -23,6 +24,9 @@ async def typing(update, context, seconds=1):
     await asyncio.sleep(seconds)
 
 async def start(update, context):
+    if context.args:
+        context.user_data["source"] = context.args[0]
+    
     button = KeyboardButton(
         text="Отправить номер",
         request_contact=True
@@ -84,9 +88,11 @@ async def photo_handler(update, context):
         )
         return
 
+    source = context.user_data.get("source", "не указан")
+
     await context.bot.send_message(
-        AGENT_ID,
-        f"Новый клиент\nТелефон: {phone}"
+    AGENT_ID,
+    f"Новый клиент\nИсточник: {source}\nТелефон: {phone}"
     )
 
     await context.bot.forward_message(
