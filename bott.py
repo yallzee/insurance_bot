@@ -24,6 +24,8 @@ async def typing(update, context, seconds=1):
     await asyncio.sleep(seconds)
 
 async def start(update, context):
+    print("ARGS:", context.args)
+    
     if context.args:
         context.user_data["source"] = context.args[0]
     
